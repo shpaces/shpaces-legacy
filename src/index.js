@@ -132,11 +132,7 @@ let userSettings = storage.get(path, (err, data) => {
 ReactDOM.render(
 	<div> 
 	{/* <TitleBar className="nav_bar" /> */}
-		
-
-	
 		<MuiThemeProvider theme={theme}>
-
 		<UWPThemeProvider
 			theme={getTheme({
 				themeName: "dark", // set custom theme
@@ -150,7 +146,6 @@ ReactDOM.render(
           <Redirect from="/" to="workspaces" />
 					<Route path="/workspaces" component={App} classes={styles} />
 					<Route path="/home" component={Home} classes={styles} userSettings={userSettings}/>
-
 				</div>
 			</Router>
 		</Provider>
