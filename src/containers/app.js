@@ -10,7 +10,7 @@ const storage = require('electron-storage');
 
 
 import { Scrollbars } from 'react-custom-scrollbars';
-import WebView from 'react-electron-web-view';
+// import WebView from 'react-electron-web-view';
 
 import FileExplorerTree from './FileExplorer.js'
 import ErrorBoundary from '../components/ErrorBoundary.js'
@@ -142,8 +142,10 @@ class FileExplorer extends Component {
         workspaces: []
       },  
       
+      newProjectName: '',
+
       currentWorkspace: 0,       
-      currentTab: 1, 
+      currentTab: 0, 
       currentProject: 'seniorproject'
 		};
 	}
@@ -207,6 +209,20 @@ class FileExplorer extends Component {
     });
   }
 
+  saveStorage = (data) => { 
+    console.log('Saving...')
+
+    let path = './settings/settings.json'
+    storage.set(path, data)
+    .then(() => {
+      console.log('Saved Successfully!');
+      this.getStorage()
+    })
+    .catch(err => {
+      console.error('Error Saving...', err);
+    });
+  }
+
   getStorage = () => { 
     let path = './settings/settings.json'
 
@@ -228,12 +244,12 @@ class FileExplorer extends Component {
 	handleDrawerClose = () => { 
 		console.log("hii", this.state.open)
 		this.setState({open: !this.state.open})
-    }
+  }
     
 	changeTab = (event, value) => {
     console.log("changing tab", value)
-			this.setState({ currentTab: value });
-    };
+		this.setState({ currentTab: value });
+  };
     
   updateLayout = (layout) => { 
     const currentTab = this.state.currentTab
@@ -254,27 +270,33 @@ class FileExplorer extends Component {
         console.error(err);
       });
     }
-    
   }
 
   createWidget = () => { 
-    const val = this.state.value
+    const workspace = this.state.currentWorkspace
+    const tab = this.state.currentTab
+
     let currentSettings = this.state.userSettings
 
-    let id = currentSettings.workspaces[val].layouts[val].length
-    let widget = {i: `${id}`, x: 0, y: 0, w: 4, h: 4, widget: {type: 'web'}}
+    let id = currentSettings.workspaces[workspace].layouts[tab].length
+    let layout = {i: `${id}`, x: 0, y: 0, w: 4, h: 4}
+    let widget = {link: 'https://shpaces.com'}
 
-    console.log(currentSettings.workspaces[val].layouts[val])
-    currentSettings.workspaces[val].layouts[val].push(widget)
+    currentSettings.workspaces[workspace].layouts[tab].push(layout)
+
+    currentSettings.workspaces[workspace].widgets[tab][id] = widget
+
+    
+    console.log(currentSettings)
 
     let path = './settings/settings.json'
     storage.set(path, currentSettings)
-    .then(() => {
-      console.log('The file was successfully written to the storage');
-      this.getStorage()
-    })
-    .catch(err => {
-      console.error(err);
+      .then(() => {
+        console.log('The file was successfully written to the storage');
+        this.getStorage()
+      })
+      .catch(err => {
+        console.error(err);
     });
     
   }
@@ -286,10 +308,36 @@ class FileExplorer extends Component {
     this.setState({ seniorProject: seniorProject });
   };
 
+  addProject = () => { 
+    const newProjectName = this.state.newProjectName
+
+    let newProject = {
+      name: newProjectName, 
+      tabs: ['Home'],
+      layouts : [
+        [
+          {i: 'a', x: 5, y: 0, w: 5, h: 10 },
+        ]
+      ], 
+      widgets : [
+        {
+          'a' : {link: 'https://shpaces.com'},
+        }, 
+      ]
+    }
+
+
+    console.log(newProject)
+  }
+
+  handleProjectNameUpdate = (e) => {
+    this.setState({newProjectName: e.target.value})
+  }
+
 	render() {
 		const { classes } = this.props;
 		const {toCopy, toMove} = this.props.copyMovePaths;
-    console.log("____", this.state.currentTab, "_______")
+    console.log("_____", this.state.currentTab, "_______")
 		return (
     <ErrorBoundary>
 
@@ -316,7 +364,6 @@ class FileExplorer extends Component {
           </List> 
         </div>
       </Drawer>
-
       
       <AppBar position="sticky" color="#2F2B28" >
         <Toolbar variant="dense" style={{WebkitAppRegion: 'drag', backgroundColor: '#292022'}}>
@@ -342,11 +389,10 @@ class FileExplorer extends Component {
             WebkitAppRegion: 'no-drag'
         }}>
        
-        <Select
-            value={this.state.currentProject}
-            // onChange={this.handleChange}
-        >
-           
+          <Select
+              value={this.state.currentProject}
+              // onChange={this.handleChange}
+          >
             <MenuItem value={'seniorproject'}>Senior Project</MenuItem>
             <MenuItem value={'propractice'}>Pro Practice</MenuItem>
           </Select>
@@ -370,12 +416,11 @@ class FileExplorer extends Component {
         </Toolbar>
         
         <Toolbar variant="dense" >
-
           <Tabs value={this.state.currentTab} onChange={this.changeTab}>
           {/* <ErrorBoundary> */}
           {
               !this.state.loading &&
-               this.state.userSettings.workspaces[0].tabs.map( (tab) => { 
+               this.state.userSettings.workspaces[this.state.currentWorkspace].tabs.map( (tab) => { 
                  return (
                    <Tab label={tab} key={tab}/>
                  )
@@ -383,22 +428,28 @@ class FileExplorer extends Component {
           }
           {/* </ErrorBoundary> */}
           </Tabs>
-        
         <IconButton  aria-label="Add"
           onClick={() => this.setState({addTab: !this.state.addTab})}
           >
           <AddIcon />
         </IconButton>
 
-        <Button  aria-label="Add"
+        {/* <Button  aria-label="Add"
           onClick={() => this.setStorage()}
         >reset
-        </Button>
-        <Button 
+        </Button> */}
+        {/* <Button 
           onClick={() => console.log(this.state.userSettings.workspaces[0].layouts)}
         >debug
-        </Button>
-        
+        </Button> */}
+
+        {
+          this.state.enableEdit && 
+            <Button 
+              onClick={this.addProject}
+            >Add Project
+            </Button> 
+        }
 
         </Toolbar>
       </AppBar>
@@ -407,7 +458,6 @@ class FileExplorer extends Component {
     {/* ----------------------- END AppBar ------------------  */}
 
     <main className={classes.content} style={{width: '100vw', height: '100%', padding: 0}}> 
-
     {
             !this.state.loading && 
             <ErrorBoundary>
@@ -417,20 +467,26 @@ class FileExplorer extends Component {
               {
                  this.state.userSettings.workspaces[0].layouts[this.state.currentTab].map( (layout) => { 
                   let thisWidget = this.state.userSettings.workspaces[0].widgets[this.state.currentTab][layout.i]
-                  // console.log('This Widget', thisWidget, layout.i)
                   return( 
                     <div key={layout.i} style={{backgroundColor: '#222029'}}>
-                        <WebWidget link={thisWidget.link} enableEdit={this.state.enableEdit}/>
+                        <WebWidget link={thisWidget.link}
+                        enableEdit={this.state.enableEdit}
+                        widget={thisWidget}
+                        saveStorage={this.saveStorage}
+                        
+                        userSettings={this.state.userSettings}
+                        currentWorkspace={this.state.currentWorkspace}
+                        currentTab={this.state.currentTab}
+                        currentLayout={layout.i}
+                      
+                        />
                     </div>
                   )
                   })
-
               }
                 </GridLayout>
             </ErrorBoundary>
-            
           }
-
     </main>
 
     { 
@@ -477,17 +533,25 @@ class FileExplorer extends Component {
 
             
             <Typography variant="h5" id="simple-modal-description">
-              New Tab
+              New Project
             </Typography>
-            {/* <Divider style={{marginTop: '20px', marginBottom : '20px'}} /> */}
 
-            <TextField
+            <input
               id="standard-name"
               label="Name"
-              // value={this.state.newTab}
-              // onChange={}
+              value={this.state.newProjectName}
+              onChange={(e) => this.handleProjectNameUpdate(e)}
               margin="normal"
             />
+
+            <Button
+              onClick={this.addProject}
+            >Create Project</Button>
+
+            <Divider style={{marginTop: '20px', marginBottom : '20px'}} />
+            <Typography variant="h5" id="simple-modal-description">
+              New Widget
+            </Typography>
 
             <Button
               onClick={this.createWidget}
