@@ -100,7 +100,7 @@ const styles = theme => ({
 
 let path = './settings/settings.json'
 
-console.log('hi', storage.get)
+// console.log('hi', storage.get)
 
 let userSettings = storage.get(path, (err, data) => {
   if (err) {

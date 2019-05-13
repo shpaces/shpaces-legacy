@@ -99,10 +99,6 @@ const styles = theme => ({
 	  padding: theme.spacing.unit * 3,
 	},
   });
-	
-  
-  
-  
 
 
 //Custom Components
@@ -186,6 +182,31 @@ class FileExplorer extends Component {
           widgets : [
             {
               'a' : {link: 'https://google.com'},
+              'b' : {link: 'https://slack.com'},
+            }, 
+            {
+              'd' : {link: 'https://drive.google.com'},
+              'e' : {link: 'https://notion.so'},
+            }
+          ]
+
+        }, 
+        {
+          name: 'Shpaces', 
+          tabs: ['Home', 'Code'],
+          layouts : [
+            [
+              {i: 'a', x: 5, y: 0, w: 5, h: 10 },
+              {i: 'b', x: 5, y: 10, w: 5, h: 7 },
+            ], 
+            [
+              {i: 'd', x: 5, y: 0, w: 5, h: 10 },
+              {i: 'e', x: 5, y: 10, w: 5, h: 7 },
+            ]
+          ], 
+          widgets : [
+            {
+              'a' : {link: 'https://shpaces.com'},
               'b' : {link: 'https://slack.com'},
             }, 
             {
@@ -279,7 +300,7 @@ class FileExplorer extends Component {
     let currentSettings = this.state.userSettings
 
     let id = currentSettings.workspaces[workspace].layouts[tab].length
-    let layout = {i: `${id}`, x: 0, y: 0, w: 4, h: 4}
+    let layout = {i: `${id}`, x: 0, y: 0, w: 6, h: 10}
     let widget = {link: 'https://shpaces.com'}
 
     currentSettings.workspaces[workspace].layouts[tab].push(layout)
@@ -334,6 +355,11 @@ class FileExplorer extends Component {
     this.setState({newProjectName: e.target.value})
   }
 
+  changeProject = (val) => { 
+    console.log(val.target.value)
+    this.setState({currentWorkspace: val.target.value})
+  }
+
 	render() {
 		const { classes } = this.props;
 		const {toCopy, toMove} = this.props.copyMovePaths;
@@ -347,23 +373,7 @@ class FileExplorer extends Component {
 		        <div {...props} style={{ ...style, backgroundColor: '#E0E9E9', borderRadius: 5 }}/>
     }>
 
-			<Drawer open={this.state.open} onClose={this.handleDrawerClose}>
-        <div
-          tabIndex={0}
-          role="button"
-          onClick={this.handleDrawerClose}
-          onKeyDown={this.handleDrawerClose}
-        >
-          <List> 
-              <ListItem button
-                 onClick={() => this.setState({currentProject: 'seniorproject'})} 
-              ><ListItemText primary={'Senior Project'} /> </ListItem>
-              <ListItem button
-                 onClick={() => this.setState({currentProject: 'propractice'})} 
-              ><ListItemText primary={'Pro Practices'} /> </ListItem>
-          </List> 
-        </div>
-      </Drawer>
+
       
       <AppBar position="sticky" color="#2F2B28" >
         <Toolbar variant="dense" style={{WebkitAppRegion: 'drag', backgroundColor: '#292022'}}>
@@ -390,11 +400,16 @@ class FileExplorer extends Component {
         }}>
        
           <Select
-              value={this.state.currentProject}
-              // onChange={this.handleChange}
+              value={this.state.currentWorkspace}
+              onChange={this.changeProject}
           >
-            <MenuItem value={'seniorproject'}>Senior Project</MenuItem>
-            <MenuItem value={'propractice'}>Pro Practice</MenuItem>
+            { 
+                this.state.userSettings.workspaces.map( (space, index) => { 
+                  console.log('space:', space, index)
+                  return <MenuItem key={index} value={index}>{space.name}</MenuItem>
+                })
+              }
+
           </Select>
           <IconButton className={classes.menuButton} color="inherit" aria-label="Menu"
 						onClick={ () => this.setState({enableEdit: !this.state.enableEdit})}
@@ -434,10 +449,12 @@ class FileExplorer extends Component {
           <AddIcon />
         </IconButton>
 
-        {/* <Button  aria-label="Add"
+        <Button  aria-label="Add"
           onClick={() => this.setStorage()}
-        >reset
-        </Button> */}
+          // onClick={() => console.log(this.state.userSettings)}
+
+        >Debug
+        </Button>
         {/* <Button 
           onClick={() => console.log(this.state.userSettings.workspaces[0].layouts)}
         >debug
@@ -463,10 +480,10 @@ class FileExplorer extends Component {
             <ErrorBoundary>
             <GridLayout 
               onLayoutChange={this.updateLayout}
-              className="layout" layout={this.state.userSettings.workspaces[0].layouts[this.state.currentTab]} cols={12} rowHeight={30} width={1300}>
+              className="layout" layout={this.state.userSettings.workspaces[this.state.currentWorkspace].layouts[this.state.currentTab]} cols={12} rowHeight={30} width={1300}>
               {
-                 this.state.userSettings.workspaces[0].layouts[this.state.currentTab].map( (layout) => { 
-                  let thisWidget = this.state.userSettings.workspaces[0].widgets[this.state.currentTab][layout.i]
+                 this.state.userSettings.workspaces[this.state.currentWorkspace].layouts[this.state.currentTab].map( (layout) => { 
+                  let thisWidget = this.state.userSettings.workspaces[this.state.currentWorkspace].widgets[this.state.currentTab][layout.i]
                   return( 
                     <div key={layout.i} style={{backgroundColor: '#222029'}}>
                         <WebWidget link={thisWidget.link}
