@@ -9,12 +9,19 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControl from '@material-ui/core/FormControl';
 import TextBox from "react-uwp/TextBox";
 import Button from '@material-ui/core/Button';
+// import Fab from '@material-ui/core/Fab';
+import Icon from '@material-ui/core/Icon';
+import Modal from '@material-ui/core/Modal';
+import Paper from '@material-ui/core/Paper' ;
+
 
 class WebWidget extends Component { 
     constructor(props) { 
         super(props)
         this.state = { 
-            link: props.link
+            link: props.link, 
+            showIcon: false, 
+            showModal: false
         }
     }
     handleLinkUpdate = (e) => { 
@@ -42,7 +49,10 @@ class WebWidget extends Component {
 
     render () { 
     return(
-        <div style={{backgroundColor: '#efefef', height: '100%', borderRadius: 5, paddingBottom: '10px'}} key={this.props.key}>
+        <div style={{backgroundColor: '#efefef', height: '100%', borderRadius: 5, paddingBottom: '10px'}} key={this.props.key}
+            onMouseEnter={() => this.setState({showIcon: true})}
+            onMouseLeave={() => this.setState({showIcon: false})}
+        >
             <div >
             <WebView
                 src={this.props.link}
@@ -51,6 +61,25 @@ class WebWidget extends Component {
                 minheight="3000px"
                 autosize={false}
             />
+
+            {
+                this.state.showIcon &&
+                <div style={{
+                    position: 'absolute', 
+                    right: 2, 
+                    bottom: 2
+                }}> 
+                 {/* <Fab color="secondary" aria-label="Edit" >
+                    <Icon>edit_icon</Icon>
+                </Fab> */}
+                <Button 
+                    onClick={() => this.setState({showModal: true})}
+                    variant="contained" > Open
+                        
+                </Button>
+                </div>
+            }
+            
             </div>
             { 
                 this.props.enableEdit && 
@@ -100,6 +129,29 @@ class WebWidget extends Component {
                     </FormControl>
                 </div> 
             }
+
+        <Modal
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+          disableAutoFocus={true}
+          open={this.state.showModal}
+          onClose={() => this.setState({showModal: !this.state.showModal})}
+        >
+          <div style={{position: 'absolute', top: '10%', left: '5%', width: '1200px', height: '800px'}} >
+          <Paper style={{padding: 50, borderRadius: 10}}> 
+
+          <WebView
+                src={this.props.link}
+                // disablewebsecurity
+                // style={{ height: '100%'}}
+                minheight="3000px"
+                autosize={false}
+            />
+            
+          </Paper>
+          </div>
+        </Modal>
+    
         </div>
     )}
 }

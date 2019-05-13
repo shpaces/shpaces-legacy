@@ -142,7 +142,8 @@ class FileExplorer extends Component {
 
       currentWorkspace: 0,       
       currentTab: 0, 
-      currentProject: 'seniorproject'
+      currentProject: 'seniorproject', 
+      debugMenu: false
 		};
 	}
 
@@ -171,22 +172,22 @@ class FileExplorer extends Component {
           tabs: ['Home', 'Email'],
           layouts : [
             [
-              {i: 'a', x: 5, y: 0, w: 5, h: 10 },
-              {i: 'b', x: 5, y: 10, w: 5, h: 7 },
+              {i: '0a', x: 5, y: 0, w: 5, h: 10 },
+              {i: '0b', x: 5, y: 10, w: 5, h: 7 },
             ], 
             [
-              {i: 'd', x: 5, y: 0, w: 5, h: 10 },
-              {i: 'e', x: 5, y: 10, w: 5, h: 7 },
+              {i: '0d', x: 5, y: 0, w: 5, h: 10 },
+              {i: '0e', x: 5, y: 10, w: 5, h: 7 },
             ]
           ], 
           widgets : [
             {
-              'a' : {link: 'https://google.com'},
-              'b' : {link: 'https://slack.com'},
+              '0a' : {link: 'https://google.com', type: 'website'},
+              '0b' : {link: 'https://slack.com', type: 'website'},
             }, 
             {
-              'd' : {link: 'https://drive.google.com'},
-              'e' : {link: 'https://notion.so'},
+              '0d' : {link: 'https://drive.google.com', type: 'website'},
+              '0e' : {link: 'https://notion.so', type: 'website'},
             }
           ]
 
@@ -196,22 +197,22 @@ class FileExplorer extends Component {
           tabs: ['Home', 'Code'],
           layouts : [
             [
-              {i: 'a', x: 5, y: 0, w: 5, h: 10 },
-              {i: 'b', x: 5, y: 10, w: 5, h: 7 },
+              {i: '1a', x: 5, y: 0, w: 5, h: 10 },
+              {i: '1b', x: 5, y: 10, w: 5, h: 7 },
             ], 
             [
-              {i: 'd', x: 5, y: 0, w: 5, h: 10 },
-              {i: 'e', x: 5, y: 10, w: 5, h: 7 },
+              {i: '1d', x: 5, y: 0, w: 5, h: 10 },
+              {i: '1e', x: 5, y: 10, w: 5, h: 7 },
             ]
           ], 
           widgets : [
             {
-              'a' : {link: 'https://shpaces.com'},
-              'b' : {link: 'https://slack.com'},
+              '1a' : {link: 'https://shpaces.com', type: 'website'},
+              '1b' : {link: 'https://slack.com', type: 'website'},
             }, 
             {
-              'd' : {link: 'https://drive.google.com'},
-              'e' : {link: 'https://notion.so'},
+              '1d' : {link: 'https://drive.google.com', type: 'website'},
+              '1e' : {link: 'https://notion.so', type: 'folder'},
             }
           ]
 
@@ -363,7 +364,7 @@ class FileExplorer extends Component {
 	render() {
 		const { classes } = this.props;
 		const {toCopy, toMove} = this.props.copyMovePaths;
-    console.log("_____", this.state.currentTab, "_______")
+    console.log("Rending...")
 		return (
     <ErrorBoundary>
 
@@ -420,9 +421,11 @@ class FileExplorer extends Component {
           
         </div>
 
-        <div float="right">
+        <div float="right" style={{
+          WebkitAppRegion: 'no-drag'
+        }}>
         <IconButton className={classes.menuButton} color="inherit" aria-label="Menu"
-            onClick={ () => this.setState({open: true})}
+            onClick={ () => this.setState({debugMenu: true})}
           >
             <CloseIcon />
           </IconButton>
@@ -449,12 +452,12 @@ class FileExplorer extends Component {
           <AddIcon />
         </IconButton>
 
-        <Button  aria-label="Add"
+        {/* <Button  aria-label="Add"
           onClick={() => this.setStorage()}
           // onClick={() => console.log(this.state.userSettings)}
 
         >Debug
-        </Button>
+        </Button> */}
         {/* <Button 
           onClick={() => console.log(this.state.userSettings.workspaces[0].layouts)}
         >debug
@@ -484,19 +487,25 @@ class FileExplorer extends Component {
               {
                  this.state.userSettings.workspaces[this.state.currentWorkspace].layouts[this.state.currentTab].map( (layout) => { 
                   let thisWidget = this.state.userSettings.workspaces[this.state.currentWorkspace].widgets[this.state.currentTab][layout.i]
+                  console.log('hm', thisWidget)
+                  
                   return( 
                     <div key={layout.i} style={{backgroundColor: '#222029'}}>
-                        <WebWidget link={thisWidget.link}
-                        enableEdit={this.state.enableEdit}
-                        widget={thisWidget}
-                        saveStorage={this.saveStorage}
-                        
-                        userSettings={this.state.userSettings}
-                        currentWorkspace={this.state.currentWorkspace}
-                        currentTab={this.state.currentTab}
-                        currentLayout={layout.i}
-                      
-                        />
+                      { 
+                        thisWidget.type == 'website' ? 
+                          <WebWidget link={thisWidget.link}
+                          enableEdit={this.state.enableEdit}
+                          widget={thisWidget}
+                          saveStorage={this.saveStorage}
+                          
+                          userSettings={this.state.userSettings}
+                          currentWorkspace={this.state.currentWorkspace}
+                          currentTab={this.state.currentTab}
+                          currentLayout={layout.i}
+                          />
+                        : 
+                        <FileExplorerTree />
+                      }
                     </div>
                   )
                   })
@@ -573,6 +582,22 @@ class FileExplorer extends Component {
             <Button
               onClick={this.createWidget}
             >Create</Button>
+            
+          </Paper>
+          </div>
+        </Modal>
+
+        <Modal
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+          disableAutoFocus={true}
+          open={this.state.debugMenu}
+          onClose={() => this.setState({debugMenu: !this.state.debugMenu})}
+        >
+          <div style={{position: 'absolute', top: '30%', left: '30%', width: '600px'}} >
+          <Paper style={{padding: 50, borderRadius: 10}}> 
+
+          
             
           </Paper>
           </div>
