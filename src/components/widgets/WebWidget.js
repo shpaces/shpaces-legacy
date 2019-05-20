@@ -146,6 +146,11 @@ class WebWidget extends Component {
                 // style={{ height: '100%'}}
                 minheight="3000px"
                 autosize={false}
+                // didStopLoading={() => console.log('Done Loading..')}
+                // onWillNavigate={() => console.log('yoo')}
+                // consoleMessage={ (e) => {
+                //     console.log('Guest page logged a message:', e.message)
+                // }}
             />
             
           </Paper>

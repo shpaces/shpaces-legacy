@@ -168,8 +168,8 @@ class FileExplorer extends Component {
       },
       workspaces: [
         {
-          name: 'Senior Project', 
-          tabs: ['Home', 'Email'],
+          name: 'Senior Class', 
+          tabs: ['Home', 'Notes'],
           layouts : [
             [
               {i: '0a', x: 5, y: 0, w: 5, h: 10 },
@@ -216,6 +216,64 @@ class FileExplorer extends Component {
             }
           ]
 
+        }, 
+        {
+          name: 'Startup', 
+          tabs: ['Home', 'Code', 'Finance'],
+          layouts : [
+            [
+              {i: '2a', x: 5, y: 0, w: 5, h: 10 },
+              {i: '2b', x: 5, y: 10, w: 5, h: 7 },
+            ], 
+            [
+              {i: '2d', x: 5, y: 0, w: 5, h: 10 },
+              {i: '2e', x: 5, y: 10, w: 5, h: 7 },
+            ], 
+            [
+              {i: '2f', x: 5, y: 0, w: 5, h: 10 },
+              {i: '2g', x: 5, y: 10, w: 5, h: 7 },
+            ]
+          ], 
+          widgets : [
+            {
+              '2a' : {link: 'https://asana.com', type: 'website'},
+              '2b' : {link: 'https://slack.com', type: 'website'},
+            }, 
+            {
+              '2d' : {link: 'https://github.com', type: 'website'},
+              '2e' : {link: 'https://codesandbox.io', type: 'website'},
+            }, 
+            {
+              '2f' : {link: 'https://mercury.co', type: 'website'},
+              '2g' : {link: 'https://quickbooks.com', type: 'website'},
+            }
+          ]
+        }, 
+        {
+          name: 'Fun🙂', 
+          tabs: ['Netflix', 'Hulu', 'HBO'],
+          layouts : [
+            [
+              {i: '3a', x: 5, y: 0, w: 5, h: 10 },
+            ], 
+            [
+              {i: '3d', x: 5, y: 0, w: 5, h: 10 },
+            ], 
+            [
+              {i: '3f', x: 5, y: 0, w: 5, h: 10 },
+            ]
+          ], 
+          widgets : [
+            {
+              '3a' : {link: 'https://netflix.com', type: 'website'},
+            }, 
+            {
+              '3d' : {link: 'https://hulu.com', type: 'website'},
+            }, 
+            {
+              '3f' : {link: 'https://hbonow.com', type: 'website'},
+            }
+          ]
         }
       ]
     }
@@ -302,7 +360,7 @@ class FileExplorer extends Component {
 
     let id = currentSettings.workspaces[workspace].layouts[tab].length
     let layout = {i: `${id}`, x: 0, y: 0, w: 6, h: 10}
-    let widget = {link: 'https://shpaces.com'}
+    let widget = {link: 'https://shpaces.com', type: 'website'}
 
     currentSettings.workspaces[workspace].layouts[tab].push(layout)
 
@@ -343,7 +401,7 @@ class FileExplorer extends Component {
       ], 
       widgets : [
         {
-          'a' : {link: 'https://shpaces.com'},
+          'a' : {link: 'https://shpaces.com', type: 'website'},
         }, 
       ]
     }
@@ -597,7 +655,10 @@ class FileExplorer extends Component {
           <div style={{position: 'absolute', top: '30%', left: '30%', width: '600px'}} >
           <Paper style={{padding: 50, borderRadius: 10}}> 
 
-          
+            <Button
+              onClick={this.setStorage}
+            > Reset
+            </Button>
             
           </Paper>
           </div>
