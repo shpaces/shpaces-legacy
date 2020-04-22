@@ -67,6 +67,6 @@
     "redux-thunk": "^2.2.0",
     "shufflejs": "^5.2.1",
     "webpack": "^2.3.2",
-    "webpack-dev-server": "^2.4.2"
+    "webpack-dev-server": "^3.1.11"
   }
 }
