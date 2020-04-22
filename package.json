@@ -6,7 +6,8 @@
   "scripts": {
     "start": "webpack-dev-server",
     "electron": "electron . --allow-file-access-from-files",
-    "build": "webpack --mode production "
+    "build": "webpack --mode production ",
+    "dist": "electron-builder"
   },
   "repository": {
     "type": "git",
@@ -21,7 +22,8 @@
     "electron-packager": "^13.1.1",
     "redux-logger": "^3.0.6",
     "style-loader": "^0.23.1",
-    "webpack-cli": "^3.3.2"
+    "webpack-cli": "^3.3.2",
+    "electron-builder": "^21.2.0"
   },
   "dependencies": {
     "3d-react-carousal": "^2.0.1",
