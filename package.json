@@ -41,7 +41,7 @@
     "electron-store": "^3.0.0",
     "es6-promisify": "^5.0.0",
     "fs-extra": "^5.0.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.13",
     "mime-types": "^2.1.17",
     "pretty-file-icons": "^2.2.1",
     "progress-stream": "^2.0.0",
